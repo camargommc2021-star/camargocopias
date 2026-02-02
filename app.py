@@ -27,7 +27,7 @@ if 'contador_orcamentos' not in st.session_state:
     st.session_state.contador_orcamentos = 0
 
 # Lista de usuários pré-cadastrados
-USUARIOS = ["Cauã", "Fabio", "Jessica", "Polyana"]
+USUARIOS = ["Kauê", "Fabio", "Jessica", "Polyana"]
 
 def formatar_rs(valor):
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
