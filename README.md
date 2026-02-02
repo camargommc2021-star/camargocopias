@@ -76,7 +76,7 @@ Para ativar o registro automático de orçamentos na planilha:
 ## Usuários do Sistema
 
 Usuários pré-cadastrados para login:
-- Cauã
+- Kauê
 - Fabio
 - Jessica
 - Polyana
