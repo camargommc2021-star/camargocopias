@@ -14,3 +14,4 @@ temp_orcamento.pdf
 .venv/
 venv/
 env/
+credenciais_google.json

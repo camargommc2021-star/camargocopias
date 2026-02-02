@@ -99,68 +99,270 @@
             }
         }
     },
-    "precos_corte": [
-        {
-            "formato": "A4",
-            "tipo": "MEIO CORTE",
-            "min": 1,
-            "max": 9999,
-            "valor": 0.1
-        },
-        {
-            "formato": "A4",
-            "tipo": "CORTE TOTAL",
-            "min": 1,
-            "max": 9999,
-            "valor": 0.3
-        },
-        {
-            "formato": "SUPER A3",
-            "tipo": "MEIO CORTE",
-            "min": 1,
-            "max": 9999,
-            "valor": 0.15
-        },
-        {
-            "formato": "SUPER A3",
-            "tipo": "CORTE TOTAL",
-            "min": 1,
-            "max": 9999,
-            "valor": 0.4
-        }
-    ],
-    "precos_impressao": {
-        "vinil": {
-            "A4": [
-                {
-                    "min": 1,
-                    "max": 9999,
-                    "valor": 6.5
-                }
-            ],
-            "SUPER A3": [
-                {
-                    "min": 1,
-                    "max": 9999,
-                    "valor": 13.0
-                }
-            ]
-        },
-        "couche": {
-            "A4": [
-                {
-                    "min": 1,
-                    "max": 9999,
-                    "valor": 5.0
-                }
-            ],
-            "SUPER A3": [
-                {
-                    "min": 1,
-                    "max": 9999,
-                    "valor": 10.0
-                }
-            ]
-        }
+  "preco_corte_por_quantidade_adesivos": [
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "A partir de 500",
+      "preco_por_adesivo": 0.15
+    },
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "De 250 a 499",
+      "preco_por_adesivo": 0.2
+    },
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "De 100 a 249",
+      "preco_por_adesivo": 0.25
+    },
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "De 50 a 99",
+      "preco_por_adesivo": 0.35
+    },
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "De 25 a 49",
+      "preco_por_adesivo": 0.45
+    },
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "A partir de 500",
+      "preco_por_adesivo": 0.05
+    },
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "De 250 a 499",
+      "preco_por_adesivo": 0.08
+    },
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "De 100 a 249",
+      "preco_por_adesivo": 0.1
+    },
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "De 50 a 99",
+      "preco_por_adesivo": 0.15
+    },
+    {
+      "formato_folha": "A4",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "De 25 a 49",
+      "preco_por_adesivo": 0.2
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "A partir de 500",
+      "preco_por_adesivo": 0.15
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "De 250 a 499",
+      "preco_por_adesivo": 0.2
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "De 100 a 249",
+      "preco_por_adesivo": 0.25
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "De 50 a 99",
+      "preco_por_adesivo": 0.35
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "CORTE TOTAL",
+      "faixa_quantidade_adesivos": "De 25 a 49",
+      "preco_por_adesivo": 0.45
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "A partir de 500",
+      "preco_por_adesivo": 0.05
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "De 250 a 499",
+      "preco_por_adesivo": 0.08
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "De 100 a 249",
+      "preco_por_adesivo": 0.1
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "De 50 a 99",
+      "preco_por_adesivo": 0.15
+    },
+    {
+      "formato_folha": "Super A3",
+      "tipo_corte": "MEIO CORTE",
+      "faixa_quantidade_adesivos": "De 25 a 49",
+      "preco_por_adesivo": 0.2
     }
+  ],
+  "preco_impressao_por_folha_vinil": [
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "A partir de 41 folhas",
+      "preco_por_folha": 3.5
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 31 a 40 folhas",
+      "preco_por_folha": 4.0
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 21 a 30 folhas",
+      "preco_por_folha": 4.5
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 16 a 20 folhas",
+      "preco_por_folha": 5.0
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 11 a 15 folhas",
+      "preco_por_folha": 5.5
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 06 a 10 folhas",
+      "preco_por_folha": 6.0
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "Até 05 folhas",
+      "preco_por_folha": 6.5
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "A partir de 41 folhas",
+      "preco_por_folha": 9.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 31 a 40 folhas",
+      "preco_por_folha": 10.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 21 a 30 folhas",
+      "preco_por_folha": 11.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 16 a 20 folhas",
+      "preco_por_folha": 12.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 11 a 15 folhas",
+      "preco_por_folha": 13.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 06 a 10 folhas",
+      "preco_por_folha": 14.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "Até 05 folhas",
+      "preco_por_folha": 15.0
+    }
+  ],
+  "preco_impressao_por_folha_couche": [
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "A partir de 41 folhas",
+      "preco_por_folha": 2.5
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 31 a 40 folhas",
+      "preco_por_folha": 3.0
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 21 a 30 folhas",
+      "preco_por_folha": 3.5
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 16 a 20 folhas",
+      "preco_por_folha": 4.0
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 11 a 15 folhas",
+      "preco_por_folha": 4.5
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "De 06 a 10 folhas",
+      "preco_por_folha": 5.0
+    },
+    {
+      "formato_folha": "A4",
+      "faixa_quantidade_folhas": "Até 05 folhas",
+      "preco_por_folha": 5.5
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "A partir de 41 folhas",
+      "preco_por_folha": 7.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 31 a 40 folhas",
+      "preco_por_folha": 8.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 21 a 30 folhas",
+      "preco_por_folha": 9.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 16 a 20 folhas",
+      "preco_por_folha": 10.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 11 a 15 folhas",
+      "preco_por_folha": 11.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "De 06 a 10 folhas",
+      "preco_por_folha": 12.0
+    },
+    {
+      "formato_folha": "Super A3",
+      "faixa_quantidade_folhas": "Até 05 folhas",
+      "preco_por_folha": 13.0
+    }
+  ]
 }

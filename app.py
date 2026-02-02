@@ -21,9 +21,130 @@ def salvar_dados(dados):
 
 if 'lista_pedidos' not in st.session_state:
     st.session_state.lista_pedidos = []
+if 'usuario_atual' not in st.session_state:
+    st.session_state.usuario_atual = None
+if 'contador_orcamentos' not in st.session_state:
+    st.session_state.contador_orcamentos = 0
+
+# Lista de usuários pré-cadastrados
+USUARIOS = ["Cauã", "Fabio", "Jessica", "Polyana"]
 
 def formatar_rs(valor):
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+# --- FUNÇÕES DE PREÇO (NOVA ESTRUTURA) ---
+def get_preco_corte(dados, formato_folha, tipo_corte, qtd_adesivos):
+    """Busca preço de corte baseado na quantidade de adesivos"""
+    precos = dados.get("preco_corte_por_quantidade_adesivos", [])
+    formato_busca = "Super A3" if "SUPER" in formato_folha.upper() else "A4"
+    
+    for preco in precos:
+        if (preco.get("formato_folha") == formato_busca and 
+            preco.get("tipo_corte") == tipo_corte):
+            faixa = preco.get("faixa_quantidade_adesivos", "")
+            # Extrair min e max da faixa
+            if "A partir de" in faixa:
+                min_qtd = int(faixa.replace("A partir de ", "").replace("+", "").strip())
+                if qtd_adesivos >= min_qtd:
+                    return preco.get("preco_por_adesivo", 0)
+            elif "De" in faixa and "a" in faixa:
+                partes = faixa.replace("De ", "").replace(" a ", "-").split("-")
+                if len(partes) == 2:
+                    min_qtd = int(partes[0].strip())
+                    max_qtd = int(partes[1].strip())
+                    if min_qtd <= qtd_adesivos <= max_qtd:
+                        return preco.get("preco_por_adesivo", 0)
+    return 0
+
+def get_preco_impressao(dados, formato_folha, tipo_material, qtd_folhas):
+    """Busca preço de impressão baseado na quantidade de folhas"""
+    if "vinil" in tipo_material.lower():
+        precos = dados.get("preco_impressao_por_folha_vinil", [])
+    else:
+        precos = dados.get("preco_impressao_por_folha_couche", [])
+    
+    formato_busca = "Super A3" if "SUPER" in formato_folha.upper() else "A4"
+    
+    for preco in precos:
+        if preco.get("formato_folha") == formato_busca:
+            faixa = preco.get("faixa_quantidade_folhas", "")
+            # Extrair min e max da faixa
+            if "A partir de" in faixa:
+                min_folhas = int(''.join(filter(str.isdigit, faixa.split()[3])))
+                if qtd_folhas >= min_folhas:
+                    return preco.get("preco_por_folha", 0)
+            elif "De" in faixa and "a" in faixa:
+                partes = faixa.replace("De ", "").replace(" a ", "-").split("-")
+                if len(partes) == 2:
+                    min_folhas = int(''.join(filter(str.isdigit, partes[0])))
+                    max_folhas = int(''.join(filter(str.isdigit, partes[1])))
+                    if min_folhas <= qtd_folhas <= max_folhas:
+                        return preco.get("preco_por_folha", 0)
+            elif "Até" in faixa:
+                max_folhas = int(''.join(filter(str.isdigit, faixa)))
+                if qtd_folhas <= max_folhas:
+                    return preco.get("preco_por_folha", 0)
+    return 0
+
+# --- FUNÇÕES GOOGLE SHEETS ---
+def get_next_id(worksheet):
+    """Retorna próximo ID disponível na planilha"""
+    try:
+        values = worksheet.get_all_values()
+        if len(values) <= 1:  # Só cabeçalho ou vazio
+            return 1
+        last_row = values[-1]
+        last_id = int(last_row[0]) if last_row[0].isdigit() else 0
+        return last_id + 1
+    except:
+        return 1
+
+def registrar_orcamento_sheets(usuario, cliente, categoria, qtd_itens, valor_total, detalhes=""):
+    """Registra orçamento no Google Sheets"""
+    try:
+        import gspread
+        from google.oauth2.service_account import Credentials
+        
+        scope = ['https://spreadsheets.google.com/feeds',
+                 'https://www.googleapis.com/auth/drive']
+        
+        if not os.path.exists('credenciais_google.json'):
+            return False, "Arquivo de credenciais não encontrado"
+        
+        creds = Credentials.from_service_account_file('credenciais_google.json', scopes=scope)
+        client = gspread.authorize(creds)
+        
+        # Abrir planilha pelo ID
+        spreadsheet = client.open_by_key('17RHfcFEooYtfx6D5L_AEKVvos1RP5MuOZa9RAuVfMBY')
+        worksheet = spreadsheet.sheet1
+        
+        # Verificar/criar cabeçalhos se planilha estiver vazia
+        if len(worksheet.get_all_values()) == 0:
+            worksheet.append_row(["ID", "Data", "Hora", "Usuário", "Cliente", 
+                                 "Categoria", "Qtd Itens", "Valor Total", "Status", "Detalhes"])
+        
+        # Gerar próximo ID
+        next_id = get_next_id(worksheet)
+        
+        # Dados do registro
+        dados = [
+            next_id,
+            datetime.now().strftime("%d/%m/%Y"),
+            datetime.now().strftime("%H:%M:%S"),
+            usuario,
+            cliente,
+            categoria,
+            qtd_itens,
+            valor_total,
+            "Concluído",
+            detalhes
+        ]
+        
+        worksheet.append_row(dados)
+        return True, f"Registrado com ID {next_id}"
+        
+    except Exception as e:
+        return False, str(e)
 
 # --- GERAR PDF PERSONALIZADO ---
 def gerar_pdf_cliente(lista_itens, valor_total, nome_cliente="", emissor=""):
@@ -114,7 +235,50 @@ def gerar_pdf_cliente(lista_itens, valor_total, nome_cliente="", emissor=""):
 st.set_page_config(page_title="Sistema Camargo Cópias", layout="wide")
 dados = carregar_dados()
 
-st.title("🎯 Sistema de Orçamentos")
+# --- TELA DE LOGIN ---
+if not st.session_state.usuario_atual:
+    st.title("🔐 Sistema de Orçamentos - Camargo Cópias")
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("### 👤 Selecione seu usuário")
+        
+        usuario_selecionado = st.selectbox(
+            "Selecione o usuário:", 
+            USUARIOS,
+            index=None,
+            placeholder="Escolha seu nome...",
+            label_visibility="collapsed"
+        )
+        
+        if usuario_selecionado:
+            if st.button("🔓 Entrar no Sistema", use_container_width=True, type="primary"):
+                st.session_state.usuario_atual = usuario_selecionado
+                st.success(f"Bem-vindo(a), {usuario_selecionado}!")
+                st.rerun()
+        else:
+            st.info("Selecione um usuário para continuar")
+    
+    # Rodapé informativo
+    st.markdown("---")
+    st.caption("Sistema interno de orçamentos • Camargo Cópias")
+    
+    st.stop()
+
+# --- INTERFACE PRINCIPAL (USUÁRIO LOGADO) ---
+col_header1, col_header2 = st.columns([3, 1])
+
+with col_header1:
+    st.title("🎯 Sistema de Orçamentos")
+    st.markdown(f"👤 **Usuário:** `{st.session_state.usuario_atual}`")
+
+with col_header2:
+    st.markdown("<br>", unsafe_allow_html=True)  # Espaçamento
+    if st.button("🚪 Sair do Sistema", use_container_width=True):
+        st.session_state.usuario_atual = None
+        st.session_state.lista_pedidos = []  # Limpa carrinho
+        st.info("Você saiu do sistema. Até logo!")
+        st.rerun()
 
 aba_orc, aba_relatorio, aba_config = st.tabs(["📊 Calculadora", "📋 Relatório Técnico", "⚙️ Painel de Preços"])
 
@@ -122,11 +286,9 @@ with aba_orc:
     if not dados:
         st.error("Erro: arquivo dados.json não encontrado.")
     else:
-        col_inf1, col_inf2 = st.columns(2)
+        col_inf1 = st.columns(1)[0]
         with col_inf1:
             nome_c = st.text_input("Nome do Cliente", placeholder="Ex: João Silva")
-        with col_inf2:
-            nome_emissor = st.text_input("Nome para assinatura (Att.)", value="Jéssica Camargo")
         
         # Seletor de Categoria
         categoria = st.selectbox("Categoria", ["Adesivos", "Apostilas"])
@@ -163,10 +325,10 @@ with aba_orc:
                 papel = "SUPER A3" if (qtd >= 100 and larg_cm >= 6.5) else "A4"
                 rend = dados["rendimentos"][papel][tipo_corte][tamanho]
                 folhas = math.ceil(qtd / rend)
-                p_c = next((f["valor"] for f in dados["precos_corte"] if f["formato"] == papel and f["tipo"] == tipo_corte and f["min"] <= qtd <= f["max"]), 0)
-                # Mapear material para tipo de preço (vinil branco e transparente usam preço de vinil)
+                # Novas funções de preço
+                p_c = get_preco_corte(dados, papel, tipo_corte, qtd)
                 tipo_material_preco = "vinil" if "vinil" in material else "couche"
-                p_i = next((f["valor"] for f in dados["precos_impressao"][tipo_material_preco][papel] if f["min"] <= folhas <= f["max"]), 0)
+                p_i = get_preco_impressao(dados, papel, tipo_material_preco, folhas)
                 
                 total_item = (qtd * p_c) + (folhas * p_i)
                 if tem_arte == "SIM": total_item += dados["configuracoes"]["taxa_arte"]
@@ -176,6 +338,7 @@ with aba_orc:
 
                 if st.button("➕ Adicionar este Item", use_container_width=True):
                     st.session_state.lista_pedidos.append({
+                        "Usuario": st.session_state.usuario_atual,
                         "Categoria": "Adesivos", "Qtd": qtd, "Tamanho": tamanho, "Formato": formato,
                         "Material": material, "Corte": tipo_corte, "Papel": papel, "Folhas": folhas,
                         "Rendimento": rend, "Preco_Corte_Un": p_c, "Preco_Impressao_Folha": p_i,
@@ -203,6 +366,7 @@ with aba_orc:
 
                 if st.button("➕ Adicionar este Item", use_container_width=True):
                     st.session_state.lista_pedidos.append({
+                        "Usuario": st.session_state.usuario_atual,
                         "Categoria": "Apostilas", "Qtd": qtd_apostila, "Páginas": paginas, 
                         "Formato": formato_apostila, "Gramatura": gramatura, "Cor": cor,
                         "Encadernação": encadernacao, "Capa Personalizada": tem_capa, "Subtotal": total_item
@@ -235,8 +399,35 @@ with aba_orc:
         c_t.metric("VALOR TOTAL", formatar_rs(total_g))
         
         with c_p:
-            pdf_bytes = gerar_pdf_cliente(st.session_state.lista_pedidos, total_g, nome_c, nome_emissor)
-            st.download_button("📄 Baixar PDF", data=pdf_bytes, file_name=f"orcamento_{nome_c}.pdf", mime="application/pdf")
+            # Gera PDF com assinatura do usuário logado
+            pdf_bytes = gerar_pdf_cliente(
+                st.session_state.lista_pedidos, 
+                total_g, 
+                nome_c, 
+                st.session_state.usuario_atual  # Usa usuário logado como emissor
+            )
+            
+            # Botão de download
+            if st.download_button("📄 Baixar PDF", data=pdf_bytes, 
+                                file_name=f"orcamento_{nome_c}.pdf", 
+                                mime="application/pdf"):
+                # Registra no Google Sheets (não bloqueia se der erro)
+                tipos_itens = ", ".join(set([item.get("Categoria", "Item") for item in st.session_state.lista_pedidos]))
+                detalhes_resumo = f"{len(st.session_state.lista_pedidos)} itens: {tipos_itens}"
+                
+                sucesso, msg = registrar_orcamento_sheets(
+                    st.session_state.usuario_atual,
+                    nome_c,
+                    tipos_itens,
+                    len(st.session_state.lista_pedidos),
+                    formatar_rs(total_g),
+                    detalhes_resumo
+                )
+                
+                if not sucesso:
+                    st.warning(f"⚠️ PDF baixado! Mas não foi registrado no Sheets: {msg}")
+                else:
+                    st.success("✅ Orçamento registrado com sucesso!")
         
         if c_l.button("❌ Limpar Tudo"):
             st.session_state.lista_pedidos = []

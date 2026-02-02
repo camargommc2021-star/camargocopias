@@ -42,15 +42,43 @@ Pronto! Seu app estará online em poucos segundos!
 
 ## Funcionalidades
 
+- ✅ **Sistema de Login** - 4 usuários pré-cadastrados (Cauã, Fabio, Jessica, Polyana)
 - ✅ Orçamentos de adesivos (vinil branco, vinil transparente, papel couche)
 - ✅ Orçamentos de apostilas
-- ✅ Cálculo automático de preços
-- ✅ Geração de PDF
+- ✅ Cálculo automático de preços com informações técnicas
+- ✅ Geração de PDF com assinatura do usuário logado
 - ✅ Relatório técnico completo
+- ✅ **Integração Google Sheets** - Registro automático de orçamentos
 
 ## Arquivos do projeto
 
 - `app.py` - Aplicativo principal
 - `dados.json` - Configurações de preços
 - `requirements.txt` - Dependências
+- `README.md` - Instruções
+- `.gitignore` - Arquivos ignorados pelo Git
 - `cabecalho.png` / `rodape.png` - Imagens para PDF (opcional)
+- `credenciais_google.json` - Credenciais do Google Cloud (não versionar!)
+
+## Configuração Google Sheets (Opcional)
+
+Para ativar o registro automático de orçamentos na planilha:
+
+1. Crie um projeto no [Google Cloud Console](https://console.cloud.google.com)
+2. Ative as APIs: Google Sheets API e Google Drive API
+3. Crie uma Service Account e baixe a chave JSON
+4. Renomeie o arquivo para `credenciais_google.json`
+5. Compartilhe sua planilha com o email da Service Account
+6. Coloque o arquivo `credenciais_google.json` na pasta do projeto (não subir no GitHub!)
+
+**Importante:** O arquivo `credenciais_google.json` está no `.gitignore` e não deve ser versionado por segurança.
+
+## Usuários do Sistema
+
+Usuários pré-cadastrados para login:
+- Cauã
+- Fabio
+- Jessica
+- Polyana
+
+Cada usuário tem sua sessão independente. Ao sair, o carrinho é limpo automaticamente.
